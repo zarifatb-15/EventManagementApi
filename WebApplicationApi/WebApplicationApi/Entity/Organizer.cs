@@ -11,4 +11,6 @@ public class Organizer:BaseEntity
     public string Phone { get; set; } = null!;
     
     public string LogoUrl { get; set; } = null!;
+    
+    public List<Event> Events { get; set; } 
 }

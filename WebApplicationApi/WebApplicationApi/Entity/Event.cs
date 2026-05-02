@@ -13,5 +13,10 @@ public class Event:BaseEntity
     public string Location { get; set; } = null!;
     
     public string BannerImageUrl { get; set; } 
+   
+    public int OrganizerId { get; set; }
+    public Organizer Organizer { get; set; }
+    
+    public List<Ticket> Tickets { get; set; }
     
 }
