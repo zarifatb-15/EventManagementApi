@@ -17,6 +17,6 @@ public class Event:BaseEntity
     public int OrganizerId { get; set; }
     public Organizer Organizer { get; set; }
     
-    public List<Ticket> Tickets { get; set; }
+    public List<Ticket> Tickets { get; set; }=new List<Ticket>();
     
 }
