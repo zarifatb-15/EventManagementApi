@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebApplicationApi.Data;
@@ -15,6 +16,8 @@ public static class ServiceRegistration
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
     }
 }

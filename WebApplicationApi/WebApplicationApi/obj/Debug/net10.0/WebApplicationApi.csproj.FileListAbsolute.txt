@@ -173,3 +173,5 @@
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/obj/Debug/net10.0/WebApplicationApi.pdb
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/obj/Debug/net10.0/WebApplicationApi.genruntimeconfig.cache
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/obj/Debug/net10.0/ref/WebApplicationApi.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/AutoMapper.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
