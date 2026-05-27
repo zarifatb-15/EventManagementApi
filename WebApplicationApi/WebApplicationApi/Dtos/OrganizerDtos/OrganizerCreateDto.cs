@@ -1,4 +1,4 @@
-namespace WebApplicationApi.Dtos.OrganizerDto;
+namespace WebApplicationApi.Dtos.OrganizerDtos;
 
 public class OrganizerCreateDto
 {

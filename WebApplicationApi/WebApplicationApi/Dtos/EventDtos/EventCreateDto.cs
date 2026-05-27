@@ -1,4 +1,4 @@
-namespace WebApplicationApi.Dtos.EventDto;
+namespace WebApplicationApi.Dtos.EventDtos;
 
 public class EventCreateDto
 {
