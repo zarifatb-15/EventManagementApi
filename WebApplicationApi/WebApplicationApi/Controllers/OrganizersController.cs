@@ -41,8 +41,8 @@ public class OrganizersController : ControllerBase
     }
 
     [HttpPost("{id}/logo")]
-    public async Task<IActionResult> UploadLogo(int id,
-        [FromForm] 
+    public async Task<IActionResult> UploadLogo(
+        [FromRoute]int id,
         [FileTypes("image/jpeg", "image/png")] [FileLength(2)]
         IFormFile? file)
     {
