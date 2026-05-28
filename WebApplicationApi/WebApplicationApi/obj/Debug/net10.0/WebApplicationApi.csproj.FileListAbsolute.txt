@@ -46,9 +46,6 @@
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/Microsoft.SqlServer.Server.dll
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/Mono.TextTemplating.dll
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/Newtonsoft.Json.dll
-/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/Swashbuckle.AspNetCore.Swagger.dll
-/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerGen.dll
-/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/System.ClientModel.dll
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/System.CodeDom.dll
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net10.0/System.Composition.AttributedModel.dll

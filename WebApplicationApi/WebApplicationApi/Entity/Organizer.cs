@@ -8,9 +8,9 @@ public class Organizer:BaseEntity
     
     public string Email { get; set; } = null!;
     
-    public string Phone { get; set; } = null!;
+    public string? Phone { get; set; } 
     
-    public string LogoUrl { get; set; } = null!;
+    public string? LogoUrl { get; set; } 
     
     public List<Event> Events { get; set; } =new List<Event>();
 }

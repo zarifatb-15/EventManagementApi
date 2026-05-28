@@ -1,6 +1,13 @@
-@WebApplicationApi_HostAddress = http://localhost:5118
-
-GET {{WebApplicationApi_HostAddress}}/weatherforecast/
+GET http://localhost:5118/api/organizers
 Accept: application/json
 
 ###
+
+POST http://localhost:5118/api/organizers
+Content-Type: application/json
+
+{
+  "name": "Code Academy",
+  "email": "info@code.edu.az",
+  "phone": "+994501234567"
+}

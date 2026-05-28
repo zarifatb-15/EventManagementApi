@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebApplicationApi.Data;
+using WebApplicationApi.Services;
 
 namespace WebApplicationApi;
 
@@ -18,6 +19,9 @@ public static class ServiceRegistration
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        
+       
+        services.AddScoped(typeof(Repositories.IRepository<>), typeof(Repositories.Repository<>));
+      
+        services.AddScoped<IOrganizerService, OrganizerService>();
     }
 }
