@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WebApplicationApi.Attributes;
 using WebApplicationApi.Dtos.OrganizerDtos;
 using WebApplicationApi.Services;
 
@@ -37,6 +38,18 @@ public class OrganizersController : ControllerBase
     {
         await _organizerService.CreateAsync(dto);
         return StatusCode(StatusCodes.Status201Created);
+    }
+
+    [HttpPost("{id}/logo")]
+    public async Task<IActionResult> UploadLogo(int id,
+        [FromForm] 
+        [FileTypes("image/jpeg", "image/png")] [FileLength(2)]
+        IFormFile? file)
+    {
+        if(file==null || file.Length == 0) return BadRequest("File is not selected");
+        
+        await _organizerService.UploadLogoAsync(id, file);
+        return Ok();
     }
     
 }
