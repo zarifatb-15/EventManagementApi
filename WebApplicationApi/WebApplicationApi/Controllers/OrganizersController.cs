@@ -51,5 +51,11 @@ public class OrganizersController : ControllerBase
         await _organizerService.UploadLogoAsync(id, file);
         return Ok();
     }
+    [HttpGet("{organizerId}/events")]
+    public async Task<IActionResult> GetEventsForOrganizer(int organizerId)
+    {
+        var events = await _organizerService.GetEventsByOrganizerIdAsync(organizerId);
+        return Ok(events);
+    }
     
 }

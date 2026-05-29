@@ -23,5 +23,7 @@ public static class ServiceRegistration
         services.AddScoped(typeof(Repositories.IRepository<>), typeof(Repositories.Repository<>));
       
         services.AddScoped<IOrganizerService, OrganizerService>();
+        services.AddScoped<IEventService, EventService>();
+        services.AddScoped<ITicketService, TicketService>();
     }
 }

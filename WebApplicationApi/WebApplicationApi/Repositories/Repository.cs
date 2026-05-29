@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationApi.Data;
 
@@ -18,7 +19,12 @@ public class Repository<T>:IRepository<T> where T : class
     {
         return await _dbSet.ToListAsync();
     }
-
+    // Əlaqəli dataları gətirmək üçün
+   public async Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.Where(predicate).ToListAsync();
+    }
+    
     public async Task<T?> GetByIdAsync(int id)
     {
         return await _dbSet.FindAsync(id);
