@@ -10,7 +10,10 @@ using WebApplicationApi.Services;
 
 namespace WebApplicationApi.Controllers;
 
-public class AccountController (IValidator<RegisterDto> registerValidator,
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController (
+    IValidator<RegisterDto> registerValidator,
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole> roleManager,
     IConfiguration config,
@@ -18,7 +21,8 @@ public class AccountController (IValidator<RegisterDto> registerValidator,
     IMapper mapper
     ): ControllerBase
 {
-[HttpPost("register")]
+
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
         var validationResult = registerValidator.Validate(registerDto);
@@ -27,18 +31,25 @@ public class AccountController (IValidator<RegisterDto> registerValidator,
 
         var user = await userManager.FindByNameAsync(registerDto.UserName); 
         if (user is not null)
-            return BadRequest("User with this email already exists");
+            return BadRequest("User with this username already exists");
 
         user = mapper.Map<AppUser>(registerDto);
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded)
             return BadRequest(result.Errors);
-
-        // todo: assign role to user (Rol yaradılanda bura açılacaq)
+        
         await userManager.AddToRoleAsync(user, "Member");
-
-        return Ok("User created successfully");
+        
+        // Email təsdiqi üçün token yaradılır
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        
+        return Ok(new 
+        { 
+            message = "User created successfully. Please confirm your email.",  
+            userId = user.Id, 
+            token = token 
+        });
     }
 
     [HttpPost("login")]
@@ -46,46 +57,39 @@ public class AccountController (IValidator<RegisterDto> registerValidator,
     {
         var user = await userManager.FindByNameAsync(loginDto.UserName); 
         if (user is null)
-            return BadRequest("Invalid email or password");
+            return BadRequest("Invalid username or password");
 
         var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
         if (!result)
-            return BadRequest("Invalid email or password");
+            return BadRequest("Invalid username or password");
+        
+        if (!await userManager.IsEmailConfirmedAsync(user))
+            return BadRequest("Please confirm your email before logging in.");
 
         var roles = await userManager.GetRolesAsync(user);
 
-        return Ok(
-            new
-            {
-                token = jwtService.GenerateToken(user, roles, config)
-            });
+        return Ok(new
+        {
+            token = jwtService.GenerateToken(user, roles, config)
+        });
     }
-
-    
-    // [HttpGet("create-role")]
-    // public async Task<IActionResult> CreateRole()
-    // {
-    //     await roleManager.CreateAsync(new IdentityRole("Member"));
-    //     await roleManager.CreateAsync(new IdentityRole("Admin"));
-    //     return Ok("Roles created successfully");
-    // }
 
     [HttpGet("profile")]
     [Authorize]
     public IActionResult Profile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var userName = User.Identity?.Name;
+        var userName = User.Identity?.Name ?? User.FindFirstValue(ClaimTypes.Name);
         var fullName = User.FindFirstValue("FullName");
         var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-        return Ok(
-            new
-            {
-                fullName,
-                userName,
-                roles
-            });
+        return Ok(new
+        {
+            userId,
+            fullName,
+            userName,
+            roles
+        });
     }
     
     [HttpPost("forgot-password")]
@@ -97,7 +101,7 @@ public class AccountController (IValidator<RegisterDto> registerValidator,
         
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-        return Ok(new { message ="Password reset token generated.",  token = token });
+        return Ok(new { message = "Password reset token generated.", token = token });
     }
     
     [HttpPost("reset-password")]
@@ -116,6 +120,21 @@ public class AccountController (IValidator<RegisterDto> registerValidator,
         if (!result.Succeeded)
             return BadRequest(result.Errors);
 
-        return Ok("Password reset token generated.!");
+        return Ok("Password reset successfully!");
+    }
+    
+    [HttpPost("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto confirmEmailDto)
+    {
+        var user = await userManager.FindByIdAsync(confirmEmailDto.UserId);
+        if (user is null)
+            return BadRequest("User with this id does not exist.");
+
+        var result = await userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
+    
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        return Ok("Email confirmed successfully.");
     }
 }
