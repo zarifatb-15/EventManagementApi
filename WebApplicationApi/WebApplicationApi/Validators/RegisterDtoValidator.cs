@@ -11,11 +11,13 @@ public class RegisterDtoValidator:AbstractValidator<RegisterDto>
             .NotEmpty().WithMessage("Full name is required");
 
         RuleFor(x => x.UserName)
-            .NotEmpty().WithMessage("UserName is required")
-            .EmailAddress().WithMessage("Invalid email format.");
+            .NotEmpty().WithMessage("UserName is required");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is not empty")
             .MinimumLength(6).WithMessage("Password must be at least 6 characters long.");
+        RuleFor(x => x.ConfirmPassword)
+            .NotEmpty().WithMessage("Confirm password is not empty")
+            .Equal(x => x.Password).WithMessage("Passwords do not match.");
     }
 }

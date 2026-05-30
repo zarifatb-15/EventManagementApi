@@ -29,7 +29,8 @@ public static class ServiceRegistration
                 opt.Password.RequireUppercase = true;
                 opt.Password.RequiredLength = 6;
             })
-            .AddEntityFrameworkStores<TakssApiDbContext>();
+            .AddEntityFrameworkStores<TakssApiDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
