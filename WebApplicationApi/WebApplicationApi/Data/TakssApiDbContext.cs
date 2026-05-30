@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationApi.Entity;
 
 namespace WebApplicationApi.Data;
 
-public class TakssApiDbContext:DbContext
+public class TakssApiDbContext:IdentityDbContext<AppUser>
 {
     public TakssApiDbContext(DbContextOptions<TakssApiDbContext> options) : base(options)
     {

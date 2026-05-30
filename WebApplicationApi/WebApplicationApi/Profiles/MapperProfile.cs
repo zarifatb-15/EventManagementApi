@@ -3,6 +3,8 @@ using WebApplicationApi.Entity;
 using WebApplicationApi.Dtos.EventDtos;
 using WebApplicationApi.Dtos.OrganizerDtos;
 using WebApplicationApi.Dtos.TicketDtos;
+using WebApplicationApi.Dtos.UserDtos;
+
 namespace WebApplicationApi.Profiles;
 
 public class MapperProfile:Profile
@@ -17,5 +19,9 @@ public class MapperProfile:Profile
 
         CreateMap<Ticket, TicketReturnDto>();
         CreateMap<TicketCreateDto, Ticket>();
+        
+        
+        CreateMap<RegisterDto, AppUser>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName));
     }
 }

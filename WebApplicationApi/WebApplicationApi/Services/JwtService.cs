@@ -1,0 +1,39 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using WebApplicationApi.Entity;
+
+namespace WebApplicationApi.Services;
+
+public class JwtService
+{
+    public string GenerateToken(AppUser user, IList<string> roles, IConfiguration config)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id), 
+            new Claim(ClaimTypes.Email, user.Email!), // Şəkildə UserName idi, bizdə Email-dir
+            new Claim("FullName", user.FullName)
+        };
+
+        if (roles != null && roles.Any())
+        {
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        }
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var jwtSecurityToken = new JwtSecurityToken(
+            issuer: config["Jwt:Issuer"],
+            audience: config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddHours(3),
+            signingCredentials: creds
+        );
+
+        var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        return token;
+    }
+}
