@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplicationApi.Attributes;
 using WebApplicationApi.Dtos.OrganizerDtos;
 using WebApplicationApi.Services;
+using WebApplicationApi.Helpers; 
 
 namespace WebApplicationApi.Controllers;
 
@@ -20,24 +21,26 @@ public class OrganizersController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var organizers = await _organizerService.GetAllAsync();
-        return Ok(organizers);
+        return Ok(ResponseModelHelper.CreateSuccessResponse(organizers));
     }
     
     [HttpGet("{id}")]
-    
     public async Task<IActionResult> GetById(int id)
     {
         var organizer = await _organizerService.GetByIdAsync(id);
-        if (organizer == null) return NotFound();
-        return Ok(organizer);
+        if (organizer == null) 
+        {
+            return NotFound(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "Organizer not found." }));
+        }
+        
+        return Ok(ResponseModelHelper.CreateSuccessResponse(organizer));
     }
     
     [HttpPost]
-    
     public async Task<IActionResult> Create([FromBody] OrganizerCreateDto dto)
     {
         await _organizerService.CreateAsync(dto);
-        return StatusCode(StatusCodes.Status201Created);
+        return StatusCode(StatusCodes.Status201Created, ResponseModelHelper.CreateSuccessResponse("Organizer created successfully."));
     }
 
     [HttpPost("{id}/logo")]
@@ -46,16 +49,19 @@ public class OrganizersController : ControllerBase
         [FileTypes("image/jpeg", "image/png")] [FileLength(2)]
         IFormFile? file)
     {
-        if(file==null || file.Length == 0) return BadRequest("File is not selected");
+        if(file == null || file.Length == 0) 
+        {
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "File is not selected." }));
+        }
         
         await _organizerService.UploadLogoAsync(id, file);
-        return Ok();
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Logo uploaded successfully."));
     }
+    
     [HttpGet("{organizerId}/events")]
     public async Task<IActionResult> GetEventsForOrganizer(int organizerId)
     {
         var events = await _organizerService.GetEventsByOrganizerIdAsync(organizerId);
-        return Ok(events);
+        return Ok(ResponseModelHelper.CreateSuccessResponse(events));
     }
-    
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplicationApi.Dtos.TicketDtos;
 using WebApplicationApi.Services;
+using WebApplicationApi.Helpers; 
 
 namespace WebApplicationApi.Controllers;
 
@@ -19,13 +20,13 @@ public class TicketsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var tickets = await _ticketService.GetAllAsync();
-        return Ok(tickets);
+        return Ok(ResponseModelHelper.CreateSuccessResponse(tickets));
     }
     
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] TicketCreateDto dto)
     {
         await _ticketService.CreateAsync(dto);
-        return StatusCode(StatusCodes.Status201Created);
+        return StatusCode(StatusCodes.Status201Created, ResponseModelHelper.CreateSuccessResponse("Ticket created successfully."));
     }
 }

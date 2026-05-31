@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplicationApi.Dtos.UserDtos;
 using WebApplicationApi.Entity;
 using WebApplicationApi.Services;
+using WebApplicationApi.Helpers; 
 
 namespace WebApplicationApi.Controllers;
 
@@ -28,29 +29,36 @@ public class AccountController(
     {
         var validationResult = registerValidator.Validate(registerDto);
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+        {
+            var errorList = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(errorList));
+        }
 
         var user = await userManager.FindByNameAsync(registerDto.UserName);
         if (user is not null)
-            return BadRequest("User with this username already exists");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User with this username already exists" }));
 
         user = mapper.Map<AppUser>(registerDto);
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+        {
+            var errorList = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(errorList));
+        }
 
         await userManager.AddToRoleAsync(user, "Member");
 
-        // Email təsdiqi üçün token yaradılır
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
-        return Ok(new
+        
+        var responseData = new
         {
             message = "User created successfully. Please confirm your email.",
             userId = user.Id,
             token = token
-        });
+        };
+
+        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
     [HttpPost("login")]
@@ -58,32 +66,31 @@ public class AccountController(
     {
         var user = await userManager.FindByNameAsync(loginDto.UserName);
         if (user is null)
-            return BadRequest("Invalid username or password");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "Invalid username or password" }));
 
         var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
         if (!result)
-            return BadRequest("Invalid username or password");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "Invalid username or password" }));
 
         if (!await userManager.IsEmailConfirmedAsync(user))
-            return BadRequest("Please confirm your email before logging in.");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "Please confirm your email before logging in." }));
 
         var roles = await userManager.GetRolesAsync(user);
 
-        //  Token və Refresh Token 
         var accessToken = jwtService.GenerateToken(user, roles, config);
         var refreshToken = jwtService.GenerateRefreshToken();
-
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpireTime = DateTime.Now.AddDays(7);
         await userManager.UpdateAsync(user);
-
-        return Ok(new
+        
+        var responseData = new
         {
             accessToken = accessToken,
             refreshToken = refreshToken
-        });
+        };
 
+        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
     [HttpGet("profile")]
@@ -95,13 +102,15 @@ public class AccountController(
         var fullName = User.FindFirstValue("FullName");
         var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
-        return Ok(new
+        var responseData = new
         {
             userId,
             fullName,
             userName,
             roles
-        });
+        };
+
+        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
     [HttpPost("forgot-password")]
@@ -109,11 +118,12 @@ public class AccountController(
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
-            return BadRequest("User with this email does not exist.");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User with this email does not exist." }));
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-        return Ok(new { message = "Password reset token generated.", token = token });
+        var responseData = new { message = "Password reset token generated.", token = token };
+        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
     [HttpPost("reset-password")]
@@ -121,7 +131,7 @@ public class AccountController(
     {
         var user = await userManager.FindByEmailAsync(resetPasswordDto.Email);
         if (user is null)
-            return BadRequest("User with this email does not exist.");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User with this email does not exist." }));
 
         var result = await userManager.ResetPasswordAsync(
             user,
@@ -130,9 +140,12 @@ public class AccountController(
         );
 
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+        {
+            var errorList = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(errorList));
+        }
 
-        return Ok("Password reset successfully!");
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Password reset successfully!"));
     }
 
     [HttpPost("confirm-email")]
@@ -140,14 +153,17 @@ public class AccountController(
     {
         var user = await userManager.FindByIdAsync(confirmEmailDto.UserId);
         if (user is null)
-            return BadRequest("User with this id does not exist.");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User with this id does not exist." }));
 
         var result = await userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
 
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+        {
+            var errorList = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(errorList));
+        }
 
-        return Ok("Email confirmed successfully.");
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Email confirmed successfully."));
     }
 
     [HttpPost("refresh-token")]
@@ -157,7 +173,7 @@ public class AccountController(
             .FirstOrDefaultAsync(u => u.RefreshToken == dto.RefreshToken);
 
         if (user is null || user.RefreshTokenExpireTime <= DateTime.Now)
-            return BadRequest("Invalid or expired refresh token.");
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "Invalid or expired refresh token." }));
 
         var roles = await userManager.GetRolesAsync(user);
 
@@ -168,10 +184,12 @@ public class AccountController(
         user.RefreshTokenExpireTime = DateTime.Now.AddDays(7);
         await userManager.UpdateAsync(user);
 
-        return Ok(new
+        var responseData = new
         {
             accessToken = newAccessToken,
             refreshToken = newRefreshToken
-        });
+        };
+
+        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 }
