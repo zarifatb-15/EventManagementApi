@@ -67,4 +67,24 @@ public class EventService:IEventService
         var organizer = await _organizerRepository.GetByIdAsync(ev.OrganizerId);
         return _mapper.Map<OrganizerReturnDto>(organizer);
     }
+
+    public async Task UpdateAsync(int id, EventUpdateDto dto)
+    {
+        var existingEvent = await _eventRepository.GetByIdAsync(id); 
+        if (existingEvent == null) 
+            throw new Exception("Event not found"); 
+        _mapper.Map(dto, existingEvent);
+        
+        _eventRepository.Update(existingEvent);
+        await _eventRepository.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var existingEvent = await _eventRepository.GetByIdAsync(id);
+        if (existingEvent == null) 
+            throw new Exception("Event not found");
+
+       
+    }
 }

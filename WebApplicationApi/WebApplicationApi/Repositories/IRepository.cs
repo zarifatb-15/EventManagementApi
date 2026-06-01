@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using WebApplicationApi.Entity;
 
 namespace WebApplicationApi.Repositories;
 

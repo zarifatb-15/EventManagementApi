@@ -23,5 +23,7 @@ public class MapperProfile:Profile
         
         CreateMap<RegisterDto, AppUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName));
+        
+        CreateMap<EventUpdateDto, Event>();
     }
 }
