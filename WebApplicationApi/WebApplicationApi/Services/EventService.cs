@@ -84,7 +84,10 @@ public class EventService:IEventService
         var existingEvent = await _eventRepository.GetByIdAsync(id);
         if (existingEvent == null) 
             throw new Exception("Event not found");
-
+        
+        _eventRepository.Delete(existingEvent);
+        
+        await _eventRepository.SaveChangesAsync();
        
     }
 }

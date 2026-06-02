@@ -40,7 +40,7 @@ public class Repository<T>:IRepository<T> where T : class
         _dbSet.Update(entity);
     }
 
-    public void Remove(T entity)
+    public void Delete(T entity)
     {
         _dbSet.Remove(entity);
     }
