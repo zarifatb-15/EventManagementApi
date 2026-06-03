@@ -27,7 +27,7 @@ public class EventService:IEventService
     }
     public async Task<List<EventReturnDto>> GetAllAsync()
     {
-        var events = _eventRepository.GetAllAsync();
+        var events = await _eventRepository.GetAllAsync();
         return _mapper.Map<List<EventReturnDto>>(events);
     }
 

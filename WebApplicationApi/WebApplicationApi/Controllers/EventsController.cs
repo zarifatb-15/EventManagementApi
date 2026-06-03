@@ -34,6 +34,14 @@ public class EventsController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, ResponseModelHelper.CreateSuccessResponse("Event created successfully."));
     }
     
+    [HttpPut("{id}")]
+    
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] EventUpdateDto dto)
+    {
+        await _eventService.UpdateAsync(id, dto);
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Event updated successfully."));
+    }
+    
     [HttpPost("{id}/banner")]
     public async Task<IActionResult> UploadBanner(
         [FromRoute] int id, 
