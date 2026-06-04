@@ -42,6 +42,13 @@ public class EventsController : ControllerBase
         return Ok(ResponseModelHelper.CreateSuccessResponse("Event updated successfully."));
     }
     
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        await _eventService.DeleteAsync(id);
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Event deleted successfully."));
+    }
+    
     [HttpPost("{id}/banner")]
     public async Task<IActionResult> UploadBanner(
         [FromRoute] int id, 
