@@ -20,7 +20,8 @@ public class AccountController(
     RoleManager<IdentityRole> roleManager,
     IConfiguration config,
     JwtService jwtService,
-    IMapper mapper
+    IMapper mapper,
+    EmailService emailService
 ) : ControllerBase
 {
 
@@ -47,17 +48,20 @@ public class AccountController(
             return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(errorList));
         }
 
-        await userManager.AddToRoleAsync(user, "Member");
+        await userManager.AddToRoleAsync(user,"Member");
 
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = System.Net.WebUtility.UrlEncode(token);
+        var confirmationLink = $"http://localhost:5118/api/Account/confirmemail?userId={user.Id}&token={encodedToken}";
+       await emailService.SendEmailAsync(user.Email!, 
+                   "Confirm your email", 
+                   $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.");
         
         var responseData = new
         {
             message = "User created successfully. Please confirm your email.",
-            userId = user.Id,
-            token = token
         };
-
+        
         return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
@@ -112,18 +116,23 @@ public class AccountController(
 
         return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
-
     [HttpGet("forgotpassword")]
-    public async Task<IActionResult> ForgotPassword(string email)
+    public async Task<IActionResult> ForgotPassword([FromQuery] string email)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
             return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User with this email does not exist." }));
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var encodedToken = System.Net.WebUtility.UrlEncode(token);
 
-        var responseData = new { message = "Password reset token generated.", token = token };
-        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
+        var resetLink = $"http://localhost:5118/api/Account/resetpassword?email={user.Email}&token={encodedToken}";
+        
+        await emailService.SendEmailAsync(email, 
+            "Reset your password", 
+            $"You can reset your password by clicking <a href='{resetLink}'>here</a>.");
+
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Password reset link has been sent to your email."));
     }
 
     [HttpPost("resetpassword")]
@@ -189,6 +198,24 @@ public class AccountController(
             accessToken = newAccessToken,
             refreshToken = newRefreshToken
         };
+
+        return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
+    }
+    [HttpPost("revoke")]
+    [Authorize] 
+    public async Task<IActionResult> Revoke()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await userManager.FindByIdAsync(userId);
+
+        if (user is null)
+            return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User not found." }));
+        
+        user.RefreshToken = null; 
+        user.RefreshTokenExpireTime = DateTime.MinValue; 
+        
+        await userManager.UpdateAsync(user);
+        var responseData = new { Message = "Token revoked successfully." };
 
         return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }

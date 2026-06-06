@@ -1,4 +1,5 @@
-using WebApplicationApi; 
+using WebApplicationApi;
+using WebApplicationApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
