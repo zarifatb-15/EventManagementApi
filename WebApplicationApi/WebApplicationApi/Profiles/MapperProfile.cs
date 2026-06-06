@@ -25,5 +25,6 @@ public class MapperProfile:Profile
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName));
         
         CreateMap<EventUpdateDto, Event>();
+        CreateMap<OrganizerUpdateDto, Organizer>();
     }
 }

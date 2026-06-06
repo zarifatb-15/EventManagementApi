@@ -32,7 +32,15 @@ public class OrganizerService:IOrganizerService
         if (organizer == null) return null;
         return _mapper.Map<OrganizerReturnDto>(organizer);
     }
-    
+
+    public async Task DeleteAsync(int id)
+    {
+        var existingOrganizer = await _repository.GetByIdAsync(id);
+        if (existingOrganizer == null)  throw new Exception("Organizer not found");
+         _repository.Delete( existingOrganizer);
+         await _repository.SaveChangesAsync();
+    }
+
     public async Task<List<EventReturnDto>> GetEventsByOrganizerIdAsync(int organizerId)
     {
         var events = await _eventRepository.GetWhereAsync(e => e.OrganizerId == organizerId);
@@ -60,5 +68,16 @@ public class OrganizerService:IOrganizerService
         _repository.Update(organizer);
         await _repository.SaveChangesAsync();
         
+    }
+
+    public async Task UpdateAsync(int id, OrganizerUpdateDto dto)
+    {
+        var existingOrganizer = await _repository.GetByIdAsync(id); 
+        if (existingOrganizer == null) 
+            throw new Exception("Organizer not found"); 
+        
+        _mapper.Map(dto, existingOrganizer);
+        _repository.Update(existingOrganizer);
+        await  _repository.SaveChangesAsync();
     }
 }

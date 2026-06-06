@@ -9,5 +9,7 @@ public interface IOrganizerService
     Task<OrganizerReturnDto?> GetByIdAsync(int id);
     Task CreateAsync(OrganizerCreateDto dto);
     Task UploadLogoAsync(int id, IFormFile file);
+    Task UpdateAsync(int id, OrganizerUpdateDto dto);
+    Task DeleteAsync(int id);
     Task<List<EventReturnDto>> GetEventsByOrganizerIdAsync(int organizerId);
 }

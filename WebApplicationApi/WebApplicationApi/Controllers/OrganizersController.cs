@@ -42,6 +42,13 @@ public class OrganizersController : ControllerBase
         await _organizerService.CreateAsync(dto);
         return StatusCode(StatusCodes.Status201Created, ResponseModelHelper.CreateSuccessResponse("Organizer created successfully."));
     }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update([FromRoute]int id, [FromBody] OrganizerUpdateDto dto)
+    {
+     await _organizerService.UpdateAsync(id, dto);
+    return Ok(ResponseModelHelper.CreateSuccessResponse("Organizer updated successfully."));
+    }
 
     [HttpPost("{id}/logo")]
     public async Task<IActionResult> UploadLogo(
@@ -63,5 +70,12 @@ public class OrganizersController : ControllerBase
     {
         var events = await _organizerService.GetEventsByOrganizerIdAsync(organizerId);
         return Ok(ResponseModelHelper.CreateSuccessResponse(events));
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        await _organizerService.DeleteAsync(id);
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Organizer deleted successfully."));
     }
 }

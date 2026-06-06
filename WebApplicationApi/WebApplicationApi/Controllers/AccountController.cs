@@ -113,7 +113,7 @@ public class AccountController(
         return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
-    [HttpPost("forgot-password")]
+    [HttpGet("forgotpassword")]
     public async Task<IActionResult> ForgotPassword(string email)
     {
         var user = await userManager.FindByEmailAsync(email);
@@ -126,7 +126,7 @@ public class AccountController(
         return Ok(ResponseModelHelper.CreateSuccessResponse(responseData));
     }
 
-    [HttpPost("reset-password")]
+    [HttpPost("resetpassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
     {
         var user = await userManager.FindByEmailAsync(resetPasswordDto.Email);
@@ -148,14 +148,14 @@ public class AccountController(
         return Ok(ResponseModelHelper.CreateSuccessResponse("Password reset successfully!"));
     }
 
-    [HttpPost("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto confirmEmailDto)
+    [HttpGet("confirmemail")]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
     {
-        var user = await userManager.FindByIdAsync(confirmEmailDto.UserId);
+        var user = await userManager.FindByIdAsync(userId);
         if (user is null)
             return BadRequest(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "User with this id does not exist." }));
 
-        var result = await userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
+        var result = await userManager.ConfirmEmailAsync(user, token);
 
         if (!result.Succeeded)
         {
@@ -166,7 +166,7 @@ public class AccountController(
         return Ok(ResponseModelHelper.CreateSuccessResponse("Email confirmed successfully."));
     }
 
-    [HttpPost("refresh-token")]
+    [HttpPost("refreshtoken")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
     {
         var user = await userManager.Users
