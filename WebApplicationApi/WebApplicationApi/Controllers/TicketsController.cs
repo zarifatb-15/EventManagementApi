@@ -29,4 +29,30 @@ public class TicketsController : ControllerBase
         await _ticketService.CreateAsync(dto);
         return StatusCode(StatusCodes.Status201Created, ResponseModelHelper.CreateSuccessResponse("Ticket created successfully."));
     }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var ticket = await _ticketService.GetByIdAsync(id);
+        
+        if (ticket is null)
+            return NotFound(ResponseModelHelper.CreateErrorResponse<string>(new List<string> { "Ticket not found." }));
+
+        return Ok(ResponseModelHelper.CreateSuccessResponse(ticket));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] TicketUpdateDto dto)
+    {
+        await _ticketService.UpdateAsync(id, dto);
+        
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Ticket updated successfully."));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _ticketService.DeleteAsync(id);
+        
+        return Ok(ResponseModelHelper.CreateSuccessResponse("Ticket deleted successfully."));
+    }
 }

@@ -146,3 +146,8 @@
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/obj/Debug/net8.0/WebApplicationApi.genruntimeconfig.cache
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/obj/Debug/net8.0/ref/WebApplicationApi.dll
 /Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net8.0/BouncyCastle.Cryptography.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net8.0/MailKit.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net8.0/MimeKit.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net8.0/System.Security.Cryptography.Pkcs.dll
+/Users/zarifababayeva/Desktop/taskapi/WebApplicationApi/WebApplicationApi/bin/Debug/net8.0/runtimes/win/lib/net8.0/System.Security.Cryptography.Pkcs.dll

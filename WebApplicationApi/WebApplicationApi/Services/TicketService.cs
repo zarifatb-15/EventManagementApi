@@ -34,6 +34,26 @@ public class TicketService:ITicketService
         await _ticketRepository.SaveChangesAsync();
     }
 
+    public async Task UpdateAsync(int id, TicketUpdateDto dto)
+    {
+        var ticket = await _ticketRepository.GetByIdAsync(id);
+        if (ticket == null) throw new Exception("Ticket not found");
+        _mapper.Map(dto, ticket);
+        _ticketRepository.Update(ticket);
+         await _ticketRepository.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var ticket = await _ticketRepository.GetByIdAsync(id);
+    
+        if (ticket == null)
+            throw new Exception("Ticket not found");
+
+        _ticketRepository.Delete(ticket);
+        await _ticketRepository.SaveChangesAsync();
+    }
+
     public async Task<List<TicketReturnDto>> GetTicketsByEventIdAsync(int eventId)
     {
         var tickets = await _ticketRepository.GetWhereAsync(t => t.EventId == eventId);
