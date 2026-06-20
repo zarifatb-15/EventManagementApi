@@ -153,7 +153,7 @@ wwwroot/uploads
 ### Clone Repository
 
 ```bash
-git clone https://github.com/zarifatb-15/taskapi.git
+git clone https://github.com/zarifatb-15/EventManagementApi
 ```
 
 ### Navigate to Project
