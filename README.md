@@ -19,7 +19,7 @@ A RESTful Web API built with ASP.NET Core for managing events, organizers, ticke
 - FluentValidation
 - AutoMapper
 - Repository Pattern
-- Service Layer Architecture
+- N-Tier Architecture
 - Global Exception Handling Middleware
 - Unit Testing (In Progress)
 - Swagger Documentation
